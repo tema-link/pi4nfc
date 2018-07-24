@@ -12,10 +12,8 @@ package hal.tokyo.rd4c.nfc;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
-import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.wiringpi.Gpio;
 import com.pi4j.wiringpi.Spi;
 
 public class RaspRC522 {
@@ -24,7 +22,7 @@ public class RaspRC522 {
     private int NRSTPD = 6;
     private int Speed = 500000;
     private int SPI_Channel = 0;
-    private static GpioController gpio;
+
 
     /* セクタバイト */
     private final int MAX_LEN = 16;
@@ -142,7 +140,6 @@ public class RaspRC522 {
     public RaspRC522() {
         this.Speed = 500000;
         RC522_Init();
-        gpio = GpioFactory.getInstance();
     }
 
     public void RC522_Init() {
@@ -156,8 +153,9 @@ public class RaspRC522 {
         }
 
         /* Reset */
-        GpioPinDigitalOutput rst = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06, "reset", PinState.LOW);
-        rst.setShutdownOptions(true, PinState.HIGH);
+        GpioController gpio = GpioFactory.getInstance();
+        GpioPinDigitalOutput rst = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06, "reset", PinState.HIGH);
+        rst.setShutdownOptions(true, PinState.LOW);
         Reset();
         /* タイマ設定 1000 1101 */
         Write_RC522(TModeReg, (byte) 0x8D);
